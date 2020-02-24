@@ -1,9 +1,9 @@
 # PBot - An AdventureLand bot.
-###### DV: @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+###### DV: @version 0.22.0_002_8d4ae08_2020-02-24_09:03:33
 ## Author: [Joseph Pahl]
 ## Version: @tag 0.22.0
 
-    - [Changelog](CHANGELOG.md)
+[Changelog](CHANGELOG.md)
     
 ## Repository: https://github.com/phanku/PBot
 
