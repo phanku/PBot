@@ -1,0 +1,114 @@
+// Provides the SCSS/CSS for the PBot HUD.
+// @author Joseph Pahl <https://github.com/phanku/>
+// @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+// @since 0.22.0_001_d08612d_2020-02-24_08:53:57
+
+@import "~flexboxgrid/dist/flexboxgrid.min.css";
+@import '~pretty-checkbox/src/pretty-checkbox.scss';
+
+%u-line {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  border-bottom: 1px solid #fff;
+}
+
+#pbot-hud {
+  position: absolute;
+  top: 160px;
+  left: 0;
+  z-index: 1;
+  text-align: left;
+
+  h1 {
+    font-size: 30px;
+    font-weight: normal;
+    
+    &:after { 
+      @extend %u-line;
+    }
+  }
+
+  #pbot-graph-dps,
+  #pbot-graph-gps,
+  #pbot-graph-xpps {
+    max-width: 75px;
+    max-height: 150px;
+  }
+
+  #pbot-minimize {
+    float: right;
+    margin-left: 20px;
+  }
+
+  #pbot-hud-content.folded {
+    display: none;
+  }
+
+  #pbot-hud-tabs { 
+
+    .u-line:after {
+      @extend %u-line;
+    }
+
+    /* Style the tab */
+    .tab {
+      overflow: hidden;
+      border: 1px solid #000;
+      background-color: #000;
+
+      /* Style the buttons that are used to open the tab content */
+      button {
+        color: #fff;
+        background-color: inherit;
+        float: left;
+        border-left: 1px solid #fff;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+
+        &:hover {
+          background-color: #ddd;
+          color: #000;
+        }
+
+        &.active {
+          background-color: #4846b4;
+        }
+      }
+    }
+
+    /* Style the tab content */
+    .tab-content {
+      display: none;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+
+      &.active {
+        display: block;
+      }
+    }
+  }
+
+  #dps-number,
+  #xpps-number,
+  #gps-number {
+    &.up:after {
+      content: '\2191';
+      display: inline-block;
+    }
+
+    &.down:after {
+      content: '\2193';
+      display: inline-block;
+    }
+
+    &.even:after {
+      content: '\21C5';
+      display: inline-block;
+    }
+  }
+}
+

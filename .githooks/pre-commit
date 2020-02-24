@@ -1,0 +1,320 @@
+#!/bin/sh
+
+# Set the error flag to stop processing on an error
+set -e
+
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+# Configurations
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+
+# The file extensions in which to update `@since` and `@version`.
+UPDATE_FILE_EXTENSIONS=( "php" "css" "js" "scss" "html" "md" "hbs" )
+
+# File that should always be updated with the latest version number regardless if that file has changed.
+APPLICATION_VERSION_FILE="./src/game/version.txt"
+
+# Read me file to update with version number and document version if applicable.
+READ_ME_FILE="./README.md"
+
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+# Constants
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Setting OS constants.
+OS_LINUX_GNU=1
+OS_MAC=2
+OS_CYGWIN=3
+OS_MSYS=4
+OS_WIN32=5
+OS_BSD=6
+
+# Setting `sed` version constants.
+SED_BSD=1
+SED_GNU=2
+
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+# Functions
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+
+# Determines the OS for changing the `sed` commands as needed.
+# @return integer One of the OS constants.
+#
+function get_OS() {
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then
+        # Linux
+        echo "$OS_LINUX_GNU"
+    elif [[ "$OSTYPE" == "darwin"* ]]; then
+        # Mac OSX
+        echo "$OS_MAC"
+    elif [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows
+        echo "$OS_CYGWIN"
+    elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        echo "$OS_MSYS"
+    elif [[ "$OSTYPE" == "win32" ]]; then
+        # I'm not sure this can happen.
+        echo "$OS_WIN32"
+    elif [[ "$OSTYPE" == "freebsd"* ]]; then
+        # BSD
+        echo "$OS_BSD"
+    else
+        # Unknown.
+        exit 1
+    fi
+}
+
+# Returns the version of `sed` that should be used based on the OS.
+# @return integer One of the `sed` version constants.
+#
+get_sed_version() {
+    case $(get_OS) in
+
+        "$OS_MAC" | "$OS_BSD")
+            echo "$SED_BSD"
+        ;;
+
+        "$OS_CYGWIN" | "$OS_MSYS" | "$OS_LINUX_GNU" | "$OS_WIN32")
+            echo "$SED_GNU"
+        ;;
+
+    esac
+}
+
+# Executes the update based on the OS the script is currently executing within.
+# This function is needed due to the differences in the `sed` command between different OSs.
+# Arguments:
+#   $1: Tag to be used for injection of version number.
+#   $2: Version to be injected/updated by `sed`.
+#   $3: The file in which the version is to be injected/updated by `sed`.
+#
+function exe_sed() {
+    local TAG="$1"
+    local VERSION="$2"
+    local FILE="$3"
+
+    case $(get_sed_version) in
+
+        "$SED_BSD")
+            sed -i "" "s/@$TAG.*/@$TAG $VERSION/g" "$FILE"
+        ;;
+
+        "$SED_GNU")
+            sed -i "s/@$TAG.*/@$TAG $VERSION/g" "$FILE"
+        ;;
+
+    esac
+}
+
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+# Process
+#-----------------------------------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------
+
+CURRENT_DATE_TIME=$(date '+%Y-%m-%d_%H:%M:%S')
+
+# Fetching all of the tags from the remote.
+# This is done so if a new tag number has been applied in the remote.
+RESULT=`git fetch --all --tags`
+
+# Fetch the lastest revision hash ID.
+# @see https://git-scm.com/docs/git-rev-parse
+COMMIT=`git rev-parse HEAD`
+
+# Identify if there is a tag associated with the current revision hash.
+# @see https://git-scm.com/docs/git-describe
+# TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || echo "")
+TAG=$(git describe --tags --abbrev=0 2> /dev/null || echo "")
+
+# Set the default flag for if/when there is not tag set on the repo and or the remote tag has
+# changed.
+DEFAULT_TAG='0.0.0.A'
+
+REAL_TAG=''
+
+# Fetch the current commit count.
+# @see https://git-scm.com/docs/git-log
+COMMIT_COUNT=$(git log --oneline | wc -l)
+
+# Padding the current commit count.
+COMMIT_COUNT_PADDING=$(printf %03d $COMMIT_COUNT)
+
+# Fetch the short version of the commit hash ID.
+# @see https://git-scm.com/docs/git-rev-parse
+SHORT_COMMIT_ID=$(git rev-parse --short HEAD)
+
+# Checking to see if there is an actual tag present.
+if [ -z "$TAG" ]; then
+
+	# Fetch the last known version number from the remote.
+	TAG=$(git tag -l --sort=-version:refname 2>&1 | head -n 1)
+
+	if [ -z "$TAG" ]; then
+		# Use the default tag number.
+		TAG=${DEFAULT_TAG}
+	fi
+else
+	# Use the matching tag number if it is available.
+	# @see https://git-scm.com/docs/git-describe
+	TAG=$(git describe --tags --abbrev=0)
+fi
+
+REAL_TAG="$TAG"
+
+# Build the details section of the version number.
+DETAIL="_${COMMIT_COUNT_PADDING}_${SHORT_COMMIT_ID}_${CURRENT_DATE_TIME}"
+
+# Build the full version number.
+VERSION="${TAG}${SUFFIX}${DETAIL}"
+
+# --- Processing @version
+# Loop through all of the files identified.
+#
+# Note:
+# 	--diff-filter:
+# 		A : Added
+# 		C : Copied
+# 		D : Deleted
+# 		M : Modified
+# 		R : Renamed
+# 		T : Changed
+# 		U : Unmerged
+# 		X : Unknown
+# 		B : Broken
+#
+# @see https://git-scm.com/docs/git-diff
+for f in `git diff --cached --name-only --diff-filter=AMCR` ;
+do
+
+	# Do not process the file if it is not a regular file.
+	if [ ! -f "$f" ] ; then
+		continue
+	fi
+
+  # Do not process any files that are contained in `dist` directories.
+  if [[ "$f" == *"dist"* ]] ; then
+      continue
+  fi
+
+  # Do not try to process this file.
+  if [[ "$f" == *"pre-commit" ]] ; then
+      continue
+  fi
+
+	# Fetch the full filename
+	FILENAME=$(basename -- "$f")
+
+	# Fetch the extension of the file.
+	EXTENSION="${FILENAME##*.}"
+
+    # Using a case statement to identify the file extensions.
+    IFS=@
+    case "@${UPDATE_FILE_EXTENSIONS[*]}@" in
+        (*"@$EXTENSION@"*)
+            exe_sed "version" "$VERSION" "$f"
+        ;;
+    esac
+
+done
+
+# --- Processing @since
+# Loop through all of the files identified.
+#
+# Note:
+# 	--diff-filter:
+# 		A : Added
+# 		C : Copied
+# 		D : Deleted
+# 		M : Modified
+# 		R : Renamed
+# 		T : Changed
+# 		U : Unmerged
+# 		X : Unknown
+# 		B : Broken
+#
+# @see https://git-scm.com/docs/git-diff
+for f in `git diff --cached --name-only --diff-filter=A` ;
+do
+
+	# Do not process the file if it is not a regular file.
+	if [ ! -f "$f" ] ; then
+		continue
+	fi
+
+  # Do not process any files that are contained in `dist` directories.
+  if [[ "$f" == *"dist"* ]] ; then
+      continue
+  fi
+
+  # Do not try to process this file.
+  if [[ "$f" == *"pre-commit" ]] ; then
+      continue
+  fi
+
+	# Fetch the full filename
+	FILENAME=$(basename -- "$f")
+
+	# Fetch the extension of the file.
+	EXTENSION="${FILENAME##*.}"
+
+    # Using a case statement to identify the file extensions.
+    IFS=@
+    case "@${UPDATE_FILE_EXTENSIONS[*]}@" in
+        (*"@$EXTENSION@"*)
+            exe_sed "since" "$VERSION" "$f"
+        ;;
+    esac
+
+done
+
+# Updating the application version file.
+if [ -f "$APPLICATION_VERSION_FILE" ] ; then
+
+    # Executing the `sed` on the application version file.
+    exe_sed "version" "$VERSION" "$APPLICATION_VERSION_FILE"
+
+    # Re-add the application version file to the git commit going out.
+    git add "$APPLICATION_VERSION_FILE"
+
+fi
+
+# Updating the application version in the README file.
+if [ -f "$READ_ME_FILE" ] ; then
+
+    # Executing the `sed` on the application version file.
+    exe_sed "tag" "$REAL_TAG" "$READ_ME_FILE"
+
+    # Re-add the application version file to the git commit going out.
+    git add "$READ_ME_FILE"
+
+fi
+
+# Building changelog.
+CURRENT_TAG=`git describe --abbrev=0`
+
+REMOTE_PRESENT=''
+
+if [[ -n "$CURRENT_TAG" ]]; then
+    REMOTE_PRESENT=$(git ls-remote --tags origin refs/tags/$CURRENT_TAG)
+fi
+
+if [[ -z "$REMOTE_PRESENT" ]]; then
+    EDIT=`git tag -l -n99 $CURRENT_TAG | sed 's/^.*\s //'`
+    git tag -d $CURRENT_TAG
+    git tag -a $CURRENT_TAG -m "$EDIT"
+    auto-changelog
+    git add CHANGELOG.md
+fi
+
+# Re-add the files via git because we just changed them.
+git diff --name-only --cached --diff-filter=AMCR | while IFS= read -r n; do git add "$n"; done
+
+# Send exit code of zero to let other systems know the version changes have been completed.
+exit 0

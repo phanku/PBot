@@ -1,0 +1,114 @@
+{{!--
+// Provides the HTML structure for the PBot HUD.
+// @author Joseph Pahl <https://github.com/phanku/>
+// @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+// @since 0.22.0_001_d08612d_2020-02-24_08:53:57
+--}}
+<div id="pbot-hud" class="gamebutton ui-widget-content container-fluid">
+    <div class="row">
+        <div id="pbot-header" class="col-xs-12">
+            <h1>
+                PBot -&nbsp;<span id="pbot-bot-version"></span>
+                <span id="pbot-minimize">X</span>
+            </h1>
+        </div>
+        <div id="pbot-hud-content" class="col-xs-12">
+            <div id="pbot-hud-tabs">
+                <div class="tab">
+                    <button class="tab-button active" data-tab="pbot-hud-stats">Stats</button>
+                    <button class="tab-button" data-tab="pbot-hud-configs">Configs</button>
+                    <button class="tab-button" data-tab="pbot-hud-party">Party</button>
+                    <button class="tab-button" data-tab="pbot-hud-logs">Logs</button>
+                </div>
+                <div id="pbot-hud-stats" class="tab-content active">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <canvas id="pbot-graph-dps" width="75" height="150"></canvas>
+                                </div>
+                                <div class="col-xs-4">
+                                    <canvas id="pbot-graph-gps" width="75" height="150"></canvas>
+                                </div>
+                                <div class="col-xs-4">
+                                    <canvas id="pbot-graph-xpps" width="75" height="150"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            HP:&nbsp;<span id="hp-number">0</span>
+                            MP:&nbsp;<span id="mp-number">0</span>
+                            ETA2L:&nbsp;<span id="eta2l-time">N/A</span>
+                            Gold:&nbsp;<span id="gold-number">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="pbot-hud-configs" class="tab-content">
+                    <h1>Configurations</h1>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <div class="pretty p-switch">
+                                <input type="checkbox" id="auto-attack" >
+                                <div class="state">
+                                    <label for="auto-attack">Auto Attack</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xs-12">
+                            <div class="pretty p-switch">
+                                <input type="checkbox" id="closest-target">
+                                <div class="state">
+                                    <label for="closest-target">Closest Target</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <div>
+                                <label for="hp-potion-trigger">HP Potion %</label>
+                                <br>
+                                <input type="text" id="hp-potion-trigger" value="30">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xs-12">
+                            <div>
+                                <label for="mp-potion-trigger">MP Potion %</label>
+                                <br>
+                                <input type="text" id="mp-potion-trigger" value="30">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <label for="max-att">Max Att</label>
+                            <br>
+                            <input type="text" id="max-att" value="600">
+                        </div>
+                    </div>
+                </div>
+                <div id="pbot-hud-party" class="tab-content">
+                    Party configurations
+                </div>
+                <div id="pbot-hud-logs" class="tab-content">
+                    Party configurations
+                </div>
+            </div>
+        </div>
+        <div id="pbot-hud-min" class="col-xs-12">
+            <h1>Stats</h1>
+            <div class="row">
+                <div class="col-lg-6 col-xs-12">
+                    DPS:&nbsp;<span id="dps-number">0</span><br>
+                    GPS:&nbsp;<span id="gps-number">0</span><br>
+                    XPPS:&nbsp;<span id="xpps-number">0</span>
+                </div>
+                <div class="col-lg-6 col-xs-12">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

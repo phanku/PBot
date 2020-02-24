@@ -1,0 +1,23 @@
+/**
+ * Provides the CSS for the logger.
+ * @author Joseph Pahl <https://github.com/phanku/>
+ * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
+ */
+
+#gamelog {
+  // ERROR
+  .pb-log-1 {
+    color: red;
+  }
+
+  // WARN
+  .pb-log-2 {
+    color: yellow;
+  }
+
+  // INFO
+  .pb-log-3 {
+    color: #51D2E1;
+  }
+}
