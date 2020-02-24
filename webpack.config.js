@@ -1,7 +1,7 @@
 /**
  * Webpack configuration for PBot.
- * @author Joseph Pahl
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @author Joseph Pahl <https://github.com/phanku/>
+ * @version 0.22.2_003_19887de_2020-02-24_09:14:33
  * @since
  */
 
@@ -75,35 +75,10 @@ module.exports = [
                         }
                     ],
                 }
-                // {
-                //     test: /\.scss$/,
-                //     use: [
-                //         {
-                //             loader: 'style-loader',
-                //             options: {
-                //             }
-                //         },
-                //         {
-                //             loader: 'css-loader',
-                //             options: {
-                //                 url: false,
-                //                 sourceMap: false
-                //             }
-                //         },
-                //         {
-                //             loader: 'sass-loader',
-                //             options: {
-                //                 sourceMap: false,
-                //             }
-                //         }
-                //     ],
-                // },
             ]
         },
         plugins: [
             new webpack.ProvidePlugin({
-                // SmoothieChart: 'smoothie/smoothie.js'
-                // ApexCharts: 'apexcharts/dist/apexcharts.min.js'
                 Chart: 'chart.js/dist/Chart.bundle.min.js'
             })
         ]
