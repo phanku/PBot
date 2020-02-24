@@ -1,7 +1,7 @@
 /**
  * Provides the logging service for PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 

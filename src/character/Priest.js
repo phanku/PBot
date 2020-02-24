@@ -1,8 +1,9 @@
 /**
- * Provides the ranger character class.
+ * Provides the priest character class.
+ * Note: Very alpha character.
  * @author Joseph Pahl <https://github.com/phanku/>
  * @version 0.23.0_010_2d26b9b_2020-02-24_15:18:07
- * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
+ * @since 0.23.0_010_2d26b9b_2020-02-24_15:18:07
  */
 
 // Imports.
@@ -10,12 +11,12 @@ const Character = require('./common/Character').default;
 const Logger = require('../game/logger/Logger').default;
 
 /**
- * The ranger character class.
+ * The priest character class.
  */
-export default class Ranger extends Character {
+export default class Priest extends Character {
 
     /**
-     * Ranger constructor
+     * Priest constructor
      */
     constructor() {
         // Calling the constructor for the parent class.
@@ -25,6 +26,6 @@ export default class Ranger extends Character {
         this.classRun = require('./common/directives/RangeAttack');
 
         // Logging debug message.
-        Logger.log(Logger.DEBUG, "Ranger character loaded.");
+        Logger.log(Logger.DEBUG, "Priest character loaded.");
     }
 };
