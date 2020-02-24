@@ -1,7 +1,7 @@
 # PBot - An AdventureLand bot.
-###### DV: @version 0.22.2_003_19887de_2020-02-24_09:14:33
+###### DV: @version 0.22.3_004_b2ab3f2_2020-02-24_09:40:42
 ## Author: [Joseph Pahl]
-## Version: @tag 0.22.2
+## Version: @tag 0.22.3
 
 [Changelog](CHANGELOG.md)
     
@@ -14,7 +14,8 @@ Adventureland is a MMORPG game in which you write JavaScript, also known as `COD
 [PBot] is my personal AdeventureLand bot that I have created for playing the game. 
 
 I personally find AdventureLand fun as I grew up playing Multi User Dungeons (MUD) back in the day. MUDs are a text 
-base role playing game. Scripting for AdventureLand reminds me of those days of playing on a MUD called Three Kingdoms.
+base role playing game. Scripting for AdventureLand reminds me of those days of playing on 
+a MUD called [Three Kingdoms].
 
 ------------------------------------------------------------
 IDE
@@ -150,3 +151,4 @@ decent development environment.
    [Underscore]: <https://underscorejs.org/>   
    [Git]: <https://git-scm.com/>  
    [PBot]: <https://github.com/phanku/PBot>
+   [Three Kingdoms]: <http://3k.org/>

@@ -1,5 +1,13 @@
 #!/bin/sh
 
+#
+# Git pre-commit auto version system.
+# @author Joseph Pahl <https://github.com/phanku/>
+# @version 2020.2.24
+# @since 2020.2.24
+# Note: This auto version system cannot
+
+
 # Set the error flag to stop processing on an error
 set -e
 
