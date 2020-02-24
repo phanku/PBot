@@ -1,7 +1,7 @@
 /**
  * Provides the constants for PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 module.exports = {
@@ -21,12 +21,37 @@ module.exports = {
             POTION_CONSUMPTION: 2.1,
         },
         HUD: {
-            SETTING_UPDATE: 3.1,
+            INITIALIZED: 3.1,
+            SETTING_UPDATE: 3.2,
+            PARTY_LEADER_UPDATE: 3.3,
+            PARTY_MEMBER_ADDED: 3.4,
+            PARTY_MEMBER_REMOVED: 3.5
+        },
+        PARTY: {
+            INITIALIZED: 4.1,
+            LEADER_UPDATE: 4.2,
+            MEMBER_ADDED: 4.3,
+            MEMBER_REMOVED: 4.4,
+            MEMBER_DISCONNECT: 4.5,
+            MEMBER_CONNECT: 4.6,
+            PARTY_COMMAND: 4.7,
         },
         GAME: {
-            BOT_VERSION: 4.1
+            BOT_VERSION: 5.1
         }
     },
+    // Defines the communication protocols between characters.
+    PARTY: {
+        LEADER_UPDATE: 1,
+        MEMBER_ADDED: 1,
+        MEMBER_REMOVED: 2,
+        MEMBER_DISCONNECT: 3,
+        MEMBER_CONNECT: 4,
+        MEMBER_REQUEST: 5,
+        MEMBER_COMMAND: 6,
+        PARTY_COMMAND: 7,
+    },
+    PCV: 1,
     // Defines the type of points for the character.
     POINTS: {
         HP: 1,

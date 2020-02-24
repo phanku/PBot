@@ -1,8 +1,9 @@
 /**
  * Provides the PBot HUD.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
+ * @todo Move any settings that could be considered semi-permanent into the storage module/local storage.
  */
 
 // Imports.
@@ -251,7 +252,6 @@ export default class Hud {
         this._graphDps.data.datasets[0].data = [this._top.dps];
         this._graphDps.data.datasets[1].data = [stats.dps];
         this._graphDps.update();
-        // this._dpsLine.append(new Date().getTime(), stats.dps);
     }
 
     /**
@@ -275,14 +275,6 @@ export default class Hud {
         this._graphXPps.data.datasets[1].data = [stats.xpps];
         this._graphXPps.update();
 
-        // this._R.damagePerSecond
-        //     .removeClass()
-        //     .addClass(this.getStatChangeClass(this.compare(stats.dps, this.last.dps)));
-
-        // this._R.XPPerSecond
-        //     .removeClass()
-        //     .addClass(this.getStatChangeClass(this.compare(stats.xpps, this.last.xpps)));
-
         this._last = stats;
     }
 
@@ -292,19 +284,28 @@ export default class Hud {
      */
     static broadcastHandler(broadcast) {
         switch(broadcast.context) {
+            case C.COMMS.PARTY.INITIALIZED:
+                // The party module has acknowledged the HUD being ready.
+                // The party module should have sent the current party leader and members here.
+                break;
+
             case C.COMMS.STATS.DAMAGE_PER_SECOND:
+                // The stats module has issued an updated DPS number.
                 this.updateDPSStat(broadcast.payload);
                 break;
 
             case C.COMMS.CHARACTER.POTION_CONSUMPTION:
+                // The character class has issued an character consuming a potion broadcast.
                 this.updatePotions(broadcast.payload);
                 break;
 
             case C.COMMS.STATS.UPDATE:
+                // The stats module has issued a stats numbers updated broadcast.
                 this.updateHudStats(broadcast.payload);
                 break;
 
             case C.COMMS.GAME.BOT_VERSION:
+                // PBot version.
                 this.setBotVersion(broadcast.payload.version);
                 break;
         }
@@ -312,6 +313,7 @@ export default class Hud {
 
     /**
      * Initializes the canvas graphs.
+     * @todo Rename this method to follow naming conventions.
      */
     static startGraph() {
         // The options for the graphics in the HUD.
@@ -445,6 +447,11 @@ export default class Hud {
                     this.initHudMinimize();
                     setTimeout(()=>{
                         this.startGraph();
+
+                        // Notify any modules waiting for the HUD to come online.
+                        Communications.broadcast(
+                            Communications.getBroadcastObject(C.COMMS.HUD.INITIALIZED, {}, this));
+
                     }, 500);
                 });
 
