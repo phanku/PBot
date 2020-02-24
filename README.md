@@ -1,5 +1,5 @@
 # PBot - An AdventureLand bot.
-###### DV: @version 0.22.4_005_8f1313f_2020-02-24_09:48:32
+###### DV: @version 0.22.4_007_418b732_2020-02-24_09:58:01
 ## Author: [Joseph Pahl]
 ## Version: @tag 0.22.4
 
@@ -17,7 +17,7 @@ I personally find [AdventureLand] fun as I grew up playing Multi User Dungeons (
 base role playing game. Scripting for [AdventureLand] reminds me of those days of playing on 
 a MUD called [Three Kingdoms].
 
-AdventureLand website: https://adventure.land/
+AdventureLand website: [https://adventure.land/](https://adventure.land/)
 
 ------------------------------------------------------------
 IDE
@@ -30,6 +30,24 @@ as it is and I do not promise anything other than here is the bot I have made fo
 
 I use the file watchers within PHPStorm to automatically execute webpack to compile the various files together into
 one file. 
+
+------------------------------------------------------------
+How to get started
+------------------------------------------------------------
+
+As stated below, this project uses [Webpack] to compile the project into one file for use within [AdventureLand].
+It is highly recommended to use a professional IDE while contributing/working with this project. 
+
+Requirements:
+    - NodeJS must be installed and functioning on the machine used to compile this project.
+    - A Node based package manager must be installed and working on the machine to compile this project. 
+
+1) Clone the this repository on to a local machine. 
+2) Open a terminal to the root of the project. 
+3) Type `npm install` or `yarn install` to install the needed development dependencies.
+4) Execute webpack. 
+5) Copy the generated `Pbot.js` file located in the `dist` folder into your clipboard.
+6) Paste the code into your `CODE` section of AdventureLand.
 
 ------------------------------------------------------------
 Auto Version for files
