@@ -1,7 +1,7 @@
 /**
  * Provides the party management features.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
+ * @version 0.22.4_009_151adb0_2020-02-24_15:14:08
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -173,6 +173,7 @@ export default class Party {
     /**
      * Sends a communication payload to all party members.
      * @param payload The payload.
+     * @stubbed
      */
     static sendPartyCommunication(payload) {
 
@@ -214,7 +215,7 @@ export default class Party {
         this.setPartySetting(key, this.getPartySetting(key) === null ? [] : this.getPartySetting(key));
 
         key = 'leader';
-        this.setPartySetting('leader', this.getPartySetting(key) === null ? '' : this.getPartySetting(key));
+        this.setPartySetting(key, this.getPartySetting(key) === null ? '' : this.getPartySetting(key));
     }
 
     /**
