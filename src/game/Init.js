@@ -56,6 +56,7 @@ const PBot = {
 
             case C.CHARACTER_CLASS.RANGER:
                 classType = 'Ranger';
+                character = require('../character/Ranger').default;
                 break;
 
             case C.CHARACTER_CLASS.MERCHANT:
@@ -64,6 +65,7 @@ const PBot = {
 
             case C.CHARACTER_CLASS.PRIEST:
                 classType = 'Priest';
+                character = require('../character/Priest').default;
                 break;
 
             case C.CHARACTER_CLASS.ROGUE:
