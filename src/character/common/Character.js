@@ -149,16 +149,8 @@ export default class Character {
 
         // Consume a potion if the potion consumed cool down is not active and there is a need to
         // consume a potion.
-        if (!this._status.potionConsumedCoolDown
+        if (!is_on_cooldown('use_mp')
             && (this.doesNeedPotion(C.POTION.HP.NAME) || this.doesNeedPotion(C.POTION.MP.NAME))) {
-
-            // Mark the potion consumed cool down time as being active.
-            this._status.potionConsumedCoolDown = true;
-
-            // Set timout to restart potion consumed cool down time.
-            setTimeout(()=>{
-                this._status.potionConsumedCoolDown = false;
-            }, 200);
 
             // Consume the potion.
             use_hp_or_mp();
@@ -200,9 +192,7 @@ export default class Character {
             // Determines the target of the character.
             target: "",
             targetType: "",
-            isAttacking: false,
-            isRIP: false,
-            potionConsumedCoolDown: false,
+            isAttacking: false
         };
 
         // Loading the inventory module.
