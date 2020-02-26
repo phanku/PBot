@@ -118,6 +118,16 @@ module.exports = {
     // Defines the constants for the stats module.
     STATS: {
         UPDATE_INTERVAL: 30,
+        TYPE: {
+            DAMAGE: 0,
+            GOLD: 1,
+            XP: 3
+        },
+        TIMEOUT: {
+            DAMAGE: 30,
+            GOLD: 60,
+            XP: 60
+        }
     }
 };
 
