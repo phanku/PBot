@@ -11,25 +11,24 @@ const Logger = require('../../../game/logger/Logger').default;
 
 /**
  * Provides the range attack behavior for characters.
- * @param character The character.
+ * @param bot The character.
  */
-module.exports = (character) => {
+module.exports = (bot) => {
 
 
-    if (character._config.attackActive && character._config.closestTarget) {
+
+    if (bot._config.attackActive && bot._config.closestTarget) {
 
     }
 
     // Is the character attacking something?
     let target = get_targeted_monster();
 
-    if(character._config.attackActive) {
-
-
+    if(bot._config.attackActive) {
 
         if (!target) {
             target = get_nearest_monster({
-                max_att: character._config.maxAtt
+                max_att: bot._config.maxAtt
             });
         }
 
@@ -53,9 +52,9 @@ module.exports = (character) => {
         // console.log(this._config.closestTarget);
         // Change to the closest target if the current target is out of range and
         // the closest target configuration is on.
-        if (!is_in_range(target) && character._config.closestTarget) {
+        if (!is_in_range(target) && bot._config.closestTarget) {
             target = get_nearest_monster({
-                max_att: character._config.maxAtt
+                max_att: bot._config.maxAtt
             });
 
             return;

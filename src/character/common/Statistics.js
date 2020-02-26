@@ -100,7 +100,9 @@ export default class Statistics {
      * @returns {number}
      */
     static getGoldPerSecond() {
-        return Math.round((character.gold - this._stats.gold) / this.getBotRunningTime());
+        return Math.round(this._runningStats[C.STATS.TYPE.GOLD].map(item => item.d)
+            .reduce((total, damage) => total + damage, 0) / C.STATS.TIMEOUT.GOLD);
+        // return Math.round((character.gold - this._stats.gold) / this.getBotRunningTime());
     }
 
     /**
@@ -108,7 +110,58 @@ export default class Statistics {
      * @returns {number}
      */
     static getDamagePerSecond() {
-        return Math.round(this._stats.damage / this.getBotRunningTime());
+        return Math.round(this._runningStats[C.STATS.TYPE.DAMAGE].map(item => item.d)
+            .reduce((total, damage) => total + damage, 0) / C.STATS.TIMEOUT.DAMAGE);
+    }
+
+    /**
+     * Returns a stat object.
+     * @param amount The stat.
+     * @returns {{d: *, ts: number}}
+     */
+    static statFactory(amount) {
+        return {
+            // The damage.
+            d: amount,
+            // When the damage was done.
+            ts: Math.floor(new Date().getTime() / 1000)
+        }
+    }
+
+    /**
+     * Records the specified amount under the specified stat.
+     * @param stat The stat.
+     * @param amount The amount.
+     */
+    static recordStat(stat, amount) {
+        this._runningStats[stat].push(this.statFactory(amount));
+        this.garbageCollectStat(stat);
+    }
+
+    /**
+     * Garbage collects the running stats collection
+     * @param stat The stat to garbage collect.
+     */
+    static garbageCollectStat(stat) {
+
+        let timeout = 0;
+
+        switch(stat) {
+            case C.STATS.TYPE.DAMAGE:
+                timeout = C.STATS.TIMEOUT.DAMAGE;
+                break;
+
+            case C.STATS.TYPE.GOLD:
+                timeout = C.STATS.TIMEOUT.GOLD;
+                break;
+
+            case C.STATS.TYPE.XP:
+                timeout = C.STATS.TIMEOUT.XP;
+                break;
+        }
+
+        let now = Math.floor(new Date().getTime() / 1000);
+        this._runningStats[stat] = this._runningStats[stat].filter((stat) => (now - stat.ts) < timeout);
     }
 
     /**
@@ -118,7 +171,7 @@ export default class Statistics {
         // Set up event listener for when the character hits its target.
         character.on(C.GAME_ACTION.TARGET_HIT,  (data) =>  {
             // Record how much damage was done.
-            this._stats.damage += data.damage;
+            this.recordStat(C.STATS.TYPE.DAMAGE, data.damage);
             // Broadcast the new DPS rate.
             Communications.broadcast(Communications.getBroadcastObject(C.COMMS.STATS.DAMAGE_PER_SECOND,
                 {dps: this.getDamagePerSecond()}, this));
@@ -126,6 +179,7 @@ export default class Statistics {
 
         // Set up event listener for when the character loots.
         character.on(C.GAME_ACTION.LOOT, (data) => {
+            this.recordStat(C.STATS.TYPE.GOLD, data.gold);
             // Broadcast the new gold level and gold per second.
             this.broadcastStatistics();
         });
@@ -180,9 +234,10 @@ export default class Statistics {
         };
 
         // Initializing the default running stats.
-        this._runningStats = {
-
-        };
+        this._runningStats = {};
+        this._runningStats[C.STATS.TYPE.DAMAGE] = [];
+        this._runningStats[C.STATS.TYPE.GOLD] = [];
+        this._runningStats[C.STATS.TYPE.XP] = [];
 
         this._botStartTime = this.getCurrentTimestamp();
         this._xpStartTime = this.getCurrentTimestamp();
