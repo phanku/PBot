@@ -129,9 +129,7 @@ export default class Character {
      * @param broadcast
      */
     broadcastHandler(broadcast) {
-
         switch(broadcast.context) {
-
             // Handle any communication from the HUD.
             case C.COMMS.HUD.SETTING_UPDATE:
                 this.updateConfigs(broadcast.payload);
