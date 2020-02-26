@@ -11,7 +11,7 @@
  
 [AdventureLand] is a MMORPG game in which you write JavaScript, also known as `CODE`, that controls your character(s).
 
-[PBot] is my personal [AdventureLand] bot that I have created for playing the game. 
+[PBot] is my personal [AdventureLand] bot that is currently being developed for playing the game. 
 
 I personally find [AdventureLand] fun as I grew up playing Multi User Dungeons (MUD) back in the day. MUDs are a text 
 base role playing game. Scripting for [AdventureLand] reminds me of those days of playing on 
@@ -26,7 +26,7 @@ IDE
 I am a professional developer with over 10 years of experience in creating web based applications. As such I do love
 and have a tendency to use professional IDEs. I used PHPStorm to create this project and have no intentions to ever 
 stop. With that said, I also do not plan to assist anyone in using this bot if I ever make it public. PBot comes
-as it is and I do not promise anything other than here is the bot I have made for the AdventureLand game.  
+as it is and I do not promise anything other than here is the bot that is being developed to play the AdventureLand game.  
 
 I use the file watchers within PHPStorm to automatically execute webpack to compile the various files together into
 one file. 
