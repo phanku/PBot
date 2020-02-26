@@ -1,5 +1,6 @@
 /**
  * Provides the mage character class.
+ * Note: Very alpha character.
  * @author Joseph Pahl <https://github.com/phanku/>
  * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
