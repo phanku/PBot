@@ -1,7 +1,7 @@
 /**
  * Provides the party management features.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.23.0_010_2d26b9b_2020-02-24_15:18:07
+ * @version 0.26.0_024_5da90be_2020-02-29_19:30:26
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -233,6 +233,8 @@ export default class Party {
         character.on('cm', (payload) => {
             this.partyCommunicationHandler(payload);
         });
+
+        parent.socket.on('msg', (data) => {console.log(msg)});
 
         this.initPartyStorage();
 
