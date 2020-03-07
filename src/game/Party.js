@@ -1,7 +1,7 @@
 /**
  * Provides the party management features.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.26.0_024_5da90be_2020-02-29_19:30:26
+ * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -9,6 +9,7 @@
 const C = require('./Constants');
 const Storage = require('./Storage').default;
 const Communications = require('./Communications').default;
+const Logger = require('./logger/Logger').default;
 
 /**
  * Provides the party management functionality.
@@ -56,6 +57,13 @@ export default class Party {
      */
     static getPartySetting(key) {
         return Storage.get('party_' + key);
+    }
+
+    /**
+     * Returns true, if and only if, the character is in a party.
+     */
+    static isInParty() {
+        return parent.party_list.filter(word => parent.character.name === word).length > 0;
     }
 
     /**
@@ -128,7 +136,9 @@ export default class Party {
      * @param character The character to request to invite to a party.
      * @stubbed
      */
-    static invitePartyMember(character) {}
+    static invitePartyMember(character) {
+        send_party_invite(character);
+    }
 
     /**
      * Causes the character to revoke the specified character from the current party.
@@ -139,9 +149,10 @@ export default class Party {
 
     /**
      * Causes the character to accept the pending party invite.
-     * @stubbed
      */
-    static acceptPartyInvite() {}
+    static acceptPartyInvite() {
+
+    }
 
     /**
      * Returns a payload object that will be used to send communication to other party members.
@@ -186,26 +197,28 @@ export default class Party {
     static broadcastHandler(broadcast) {
         switch(broadcast.context) {
 
-            case C.HUD.INITIALIZED:
+            case C.COMMS.HUD.INITIALIZED:
                 // The HUD has come been initialized.
                 // Send the current party settings to the HUD for rendering.
                 Communications.broadcast(Communications.getBroadcastObject(C.COMMS.PARTY.INITIALIZED, {
                     leader: this.getPartySetting('leader'), members: this.getPartySetting('members')}, this));
                 break;
 
-            case C.HUD.PARTY_LEADER_UPDATE:
+            case C.COMMS.HUD.PARTY_LEADER_UPDATE:
                 // The HUD has a leader update.
                 break;
 
-            case C.HUD.PARTY_MEMBER_ADDED:
+            case C.COMMS.HUD.PARTY_MEMBER_ADDED:
                 // The HUD has a party member added.
                 break;
 
-            case C.HUD.PARTY_MEMBER_REMOVED:
+            case C.COMMS.HUD.PARTY_MEMBER_REMOVED:
                 // the HUD has a party member removed.
                 break;
         }
     }
+
+
 
     /**
      * Initializes the party settings in the local storage.
@@ -215,13 +228,70 @@ export default class Party {
         this.setPartySetting(key, this.getPartySetting(key) === null ? [] : this.getPartySetting(key));
 
         key = 'leader';
-        this.setPartySetting(key, this.getPartySetting(key) === null ? '' : this.getPartySetting(key));
+        this.setPartySetting(key, this.getPartySetting(key) === null ? 'Phanku' : this.getPartySetting(key));
+    }
+
+    /**
+     * Handles a party invite for this character.
+     * @param e
+     */
+    static partyInviteHandler(e) {
+        // As per the rules of a party, the party leader should be the only character inviting a member.
+        //      - A party leader is defined as:
+        //          - The member who starts a party with another character when there is no party.
+        //          - A member of the current party who has been elevated to party leader by the party leader leaving.
+        //          - A member of the current party is elevated to party leader when they are the first character in the
+        //              parent.party_list array.
+        //
+        // So based on the specified rules the following actions should happen:
+        //      - Is this character currently in a party?
+        //          - I am not sure if the devs of the game have considered this but still check.
+        //              - If yes, do nothing.
+        //      - Does this character have local storage that defines a party leader?
+        //          - Does the character sending the invite match the current character in local storage?
+        //              - If yes, then accept.
+        //              - If No, then there must be some sort of validation done to ensure that the character that is
+        //                  requesting to party with this character is part of the same swarm of PBot that a user is
+        //                  implementing. Otherwise PBot could be tricked into randomly accepting party members for EXP
+        //                  leaking.
+        //          - The character does have local storage that defines a party leader but the character sending the
+        //              invite does not match the local storage. Realistically this could be easily caused by network
+        //              traffic issues, or for that matter a bunch of reasons.
+        //              - There will be a need to be able to validate the the character requesting the party to ensure
+        //                  that this PBot within a swarm ran by a user is not being tricked into accepting a party
+        //                  invite for EXP leaking.
+
+        Logger.log(Logger.DEBUG, "Party invite received.");
+        console.log(e);
+        // Is the character currently in a party?
+        if (this.isInParty()) {
+            // Yes, do nothing.
+            return;
+        }
+    }
+
+    static cmHandler(e) {
+        console.log(e);
+        console.log(name);
+        console.log(data);
+    }
+
+    static bindSocketEvents() {
+        Logger.log(Logger.DEBUG, 'Binding to parent socket for invite messages.');
+        parent.socket.on('invite', this.partyInviteHandler);
+        parent.socket.on('cm', this.cmHandler);
     }
 
     /**
      * Initializes the party class.
      */
-    static init() {
+    static init(parent) {
+
+        parent.socket.onevent('cm', )
+        window.socket.on('cm', (data)=>{
+            console.log(data);
+        });
+
         // Subscribing to the communications object.
         Communications.subscribe((broadcast) => {
             // The broadcastHandler function must be wrapped by a lambda function so as to maintain the
@@ -229,19 +299,16 @@ export default class Party {
             this.broadcastHandler(broadcast);
         });
 
-        // Binding the character's CM events.
-        character.on('cm', (payload) => {
-            this.partyCommunicationHandler(payload);
-        });
-
-        parent.socket.on('msg', (data) => {console.log(msg)});
-
         this.initPartyStorage();
+
+        // Binding to the socket events.
+        this.bindSocketEvents();
+
+        setInterval(()=>{
+
+        }, 1000);
 
         // Initializing the observers array.
         Logger.log(Logger.DEBUG, 'Party initialized.');
     }
 };
-
-// Initializing the party class.
-Party.init();
