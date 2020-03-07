@@ -1,7 +1,7 @@
 /**
  * Initializes PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -11,6 +11,7 @@ const Hud = require('./hud/Hud').default;
 const Storage = require('./Storage').default;
 const Logger = require('./logger/Logger').default;
 const Communications = require('./Communications').default;
+const Party = require('./Party').default;
 
 /**
  * Creates the main PBot object.
@@ -88,7 +89,7 @@ const PBot = {
     /**
      * Initializes PBot.
      */
-    init() {
+    init(parent) {
         // Reporting the BOT initializing.
         this.reportBotVersion();
         // Reporting the character name.
@@ -103,6 +104,6 @@ const PBot = {
 };
 
 // Initialize the Bot.
-PBot.init();
+PBot.init(parent);
 // Export the bot for Webpack.
 module.exports = PBot;

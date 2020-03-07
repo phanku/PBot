@@ -1,7 +1,7 @@
 /**
  * Provides the constants for PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
+ * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 module.exports = {
@@ -51,7 +51,12 @@ module.exports = {
         MEMBER_COMMAND: 6,
         PARTY_COMMAND: 7,
     },
-    PCV: 1,
+    // Defines the characters the party module with consider for a party.
+    PARTY_ALLOWED_CHARACTERS: [
+        'Phanku',
+        'YToo',
+        'YKnot'
+    ],
     // Defines the type of points for the character.
     POINTS: {
         HP: 1,

@@ -15,43 +15,33 @@ export default class Logger {
      * Returns the log level `NONE`.
      * @return {number}
      */
-    static get NONE() {
-        return 0;
-    }
+    static get NONE() {return 0;}
 
     /**
      * Returns the log level `DEBUG`.
      * @return {number}
      */
-    static get INFO() {
-        return 1;
-    }
+    static get INFO() {return 1;}
 
     /**
      * Returns the log level `ERROR`.
      * @return {number}
      */
-    static get ERROR() {
-        return 2;
-    }
+    static get ERROR() {return 2;}
 
     /**
      * Returns the log level `WARN`.
      * @return {number}
      * @constructor
      */
-    static get WARN() {
-        return 3;
-    }
+    static get WARN() {return 3;}
 
     /**
      * Returns the log level `INFO`.
      * @return {number}
      * @constructor
      */
-    static get DEBUG() {
-        return 4;
-    }
+    static get DEBUG() {return 4;}
 
     /**
      * Returns the current logging level.
