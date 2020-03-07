@@ -10,6 +10,7 @@ const C = require('./Constants');
 const Storage = require('./Storage').default;
 const Communications = require('./Communications').default;
 const Logger = require('./logger/Logger').default;
+const sha256 = require('sha256/lib/sha256');
 
 /**
  * Provides the party management functionality.
@@ -60,18 +61,43 @@ export default class Party {
     }
 
     /**
+     * Sets the party's code message signature private key in local storage.
+     * @param key The key.
+     */
+    static setPartyKey(key) {
+        Storage.setGlobal('party_signature', key);
+    }
+
+    /**
+     * Returns the party's code message signature private key from local storage.
+     * @returns {*}
+     */
+    static getPartyKey() {
+        return Storage.getGlobal('party_signature');
+    }
+
+    /**
+     * Returns true if, and only if, the specified character is part of the current party.
+     * @param name The name of the character.
+     * @returns {boolean}
+     */
+    static isAPartyMember(name) {
+        return parent.party_list.filter(word => name === word).length > 0;
+    }
+
+    /**
      * Returns true, if and only if, the character is in a party.
      */
     static isInParty() {
-        return parent.party_list.filter(word => parent.character.name === word).length > 0;
+        return this.isAPartyMember(character.name);
     }
 
     /**
      * Returns true if, and only if, the specified character is the current party leader.
-     * @param character The character.
+     * @param name The name of the character.
      */
-    static characterIsPartyLeader(character) {
-        return this.getPartySetting('leader') === character;
+    static characterIsPartyLeader(name) {
+        return parent.party_list.length > 0 ? parent.party_list[0] === name : false;
     }
 
     /**
@@ -99,36 +125,28 @@ export default class Party {
     }
 
     /**
-     * Returns the list of party members, and any related information to that character.
+     * Returns the list of party members from the local storage.
      * @return {array}
      */
-    static getPartyMembers() {
+    static readPartyMembers() {
         return this.getPartySetting('members');
     }
 
     /**
-     * Sets the members for the party.
+     * Saves the list of party members into local storage.
      * @param members The members
      */
-    static setPartyMembers(members) {
+    static savePartyMembers(members) {
         this.setPartySetting('members', members);
     }
 
     /**
-     * Returns the current party leader.
-     * @return {string}
-     * @stubbed
+     * Returns true if, and only if, the specified character is the current character.
+     * @param name The character.
+     * @returns {boolean}
      */
-    static getPartyLeader() {
-        return this.getPartySetting('leader');
-    }
-
-    /**
-     * Sets the specified character as the party leader.
-     * @param character The character.
-     */
-    static setPartyLeader(character) {
-        this.setPartySetting('leader', character);
+    static isThisCharacter(name) {
+        return name === character.name;
     }
 
     /**
@@ -150,23 +168,35 @@ export default class Party {
     /**
      * Causes the character to accept the pending party invite.
      */
-    static acceptPartyInvite() {
-
+    static acceptPartyInvite(name) {
+        accept_party_invite(name);
+        this.savePartyMembers(parent.party_list);
     }
 
     /**
      * Returns a payload object that will be used to send communication to other party members.
      * @param payload The payload to be sent to the party member(s).
-     * @return {{PCV: number, payload: string, timestamp: number}}
+     * @returns {{payload: *, key}}
      */
     static getPartyCommunicationPayload(payload) {
-        return {
-            PCV: C.PCV,
+        let out = {
             // The payload.
-            payload: payload,
-            // Timestamp of when the payload was created.
-            timestamp: new Date().getTime()
-        }
+            payload: payload
+        };
+
+        out.signature = sha256([payload, this.getPartyKey()]);
+        return out;
+    }
+
+    /**
+     * Returns true if, and only if, the specified payload has a valid signature.
+     * @param payload The payload.
+     * @returns {boolean}
+     */
+    static hasValidSignature(payload) {
+        let signature = payload.signature;
+        delete payload.signature;
+        return sha256([payload, this.getPartyKey()]) === signature;
     }
 
     /**
@@ -177,17 +207,50 @@ export default class Party {
      * @param character The character that should receive the message.
      * @stubbed
      */
-    static partyCommunicationHandler(payload, character) {
+    static partyMessageHandler(from, payload) {
 
     }
 
     /**
-     * Sends a communication payload to all party members.
+     * Sends a communication payload to a party member.
      * @param payload The payload.
      * @stubbed
      */
-    static sendPartyCommunication(payload) {
+    static sendPartyMemberMessage(to, payload) {
+    }
 
+    /**
+     * Sends a communication payload to all party members.
+     * @param payload
+     */
+    static sendPartyMessage(payload) {
+
+    }
+
+    /**
+     * Handles party communications from other party members.
+     * @param from The name of the character that sent the message.
+     * @param payload The payload.
+     */
+    static codeMessageHandler(from, payload) {
+        // Have to determine certain things before blindly sending this over to the party message handler.
+        // 1) Is the signature for the payload actually correct?
+        // 2) Is the code message actually a party related message?
+
+        // Checking the signature of the message.
+        // Log a warning and then ignore if the signature is not correct.
+        if (!this.hasValidSignature(payload))
+        {
+            Logger.log(Logger.WARN, 'Invalid signature on CM from: ' + from);
+            // Nothing to do.
+            return;
+        }
+
+        // Add check for party related message.
+
+        // The person the CM is from is part of the current party.
+        // Process the payload.
+        this.partyMessageHandler(from, payload);
     }
 
     /**
@@ -218,24 +281,28 @@ export default class Party {
         }
     }
 
-
-
     /**
      * Initializes the party settings in the local storage.
      */
     static initPartyStorage() {
+        Logger.log(Logger.DEBUG, 'Initializing party local storage.');
         let key = 'members';
         this.setPartySetting(key, this.getPartySetting(key) === null ? [] : this.getPartySetting(key));
+        if (this.getPartyKey() === null) {
+            this.setPartyKey(Math.random().toString(36).slice(-16));
+            Logger.log(Logger.DEBUG, "Generated party key. Key: " + this.getPartyKey());
+            return;
+        }
 
-        key = 'leader';
-        this.setPartySetting(key, this.getPartySetting(key) === null ? 'Phanku' : this.getPartySetting(key));
+        Logger.log(Logger.DEBUG, "Party key found. Key: " + this.getPartyKey());
     }
 
     /**
      * Handles a party invite for this character.
-     * @param e
+     * @param invite The invite.
+     * @todo Continue to flush out logic for this method.
      */
-    static partyInviteHandler(e) {
+    static partyInviteHandler(invite) {
         // As per the rules of a party, the party leader should be the only character inviting a member.
         //      - A party leader is defined as:
         //          - The member who starts a party with another character when there is no party.
@@ -262,36 +329,29 @@ export default class Party {
         //                  invite for EXP leaking.
 
         Logger.log(Logger.DEBUG, "Party invite received.");
-        console.log(e);
+
         // Is the character currently in a party?
-        if (this.isInParty()) {
+        if (Party.isInParty()) {
             // Yes, do nothing.
             return;
         }
+
+        Party.acceptPartyInvite(invite.name);
     }
 
-    static cmHandler(e) {
-        console.log(e);
-        console.log(name);
-        console.log(data);
-    }
-
-    static bindSocketEvents() {
-        Logger.log(Logger.DEBUG, 'Binding to parent socket for invite messages.');
+    /**
+     * Creates the event listeners needed for the party module.
+     */
+    static bindEvents() {
+        Logger.log(Logger.DEBUG, 'Binding to parent socket for invites and party messages.');
         parent.socket.on('invite', this.partyInviteHandler);
-        parent.socket.on('cm', this.cmHandler);
+        window.on_cm = this.codeMessageHandler;
     }
 
     /**
      * Initializes the party class.
      */
-    static init(parent) {
-
-        parent.socket.onevent('cm', )
-        window.socket.on('cm', (data)=>{
-            console.log(data);
-        });
-
+    static init() {
         // Subscribing to the communications object.
         Communications.subscribe((broadcast) => {
             // The broadcastHandler function must be wrapped by a lambda function so as to maintain the
@@ -300,15 +360,11 @@ export default class Party {
         });
 
         this.initPartyStorage();
-
         // Binding to the socket events.
-        this.bindSocketEvents();
-
-        setInterval(()=>{
-
-        }, 1000);
-
+        this.bindEvents();
         // Initializing the observers array.
         Logger.log(Logger.DEBUG, 'Party initialized.');
     }
 };
+
+Party.init();

@@ -20,21 +20,39 @@ Lockr.prefix = 'PBot_';
 export default class Storage {
 
     /**
-     * Sets the value in the local storage under the key.
+     * Sets a PBot global variable.
      * @param key The key.
      * @param value The value.
      */
-    static set(key, value) {
+    static setGlobal(key, value) {
         Lockr.set(key, value);
     }
 
     /**
-     * Returns the value of the specified key, or null.
+     * Gets a PBot global variable.
+     * @param key The key.
+     * @returns {*}
+     */
+    static getGlobal(key) {
+        return Lockr.get(key, null);
+    }
+
+    /**
+     * Sets, a character level, value in the local storage under the key.
+     * @param key The key.
+     * @param value The value.
+     */
+    static set(key, value) {
+        this.setGlobal(character.name + '_' + key, value);
+    }
+
+    /**
+     * Returns the, character level, value of the specified key, or null.
      * @param key
      * @return {*}
      */
     static get(key) {
-        return Lockr.get(key, null);
+        return this.getGlobal(character.name + '_' + key);
     }
 
     /**

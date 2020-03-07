@@ -5,6 +5,9 @@
   "repository": "https://github.com/phanku/PBot.git",
   "author": "phanku",
   "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
   "devDependencies": {
     "chart.js": "^2.9.3",
     "css-loader": "^3.4.2",

@@ -103,7 +103,6 @@ const PBot = {
     }
 };
 
-Party.init(parent);
 // Initialize the Bot.
 PBot.init(parent);
 // Export the bot for Webpack.

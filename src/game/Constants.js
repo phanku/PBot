@@ -51,15 +51,12 @@ module.exports = {
         MEMBER_COMMAND: 6,
         PARTY_COMMAND: 7,
     },
-    // Defines the signature private key to be used within a PBot swarm.
-    PARTY_SIGNATURE: 'N%z!RN4B8C2C}v6',
     // Defines the characters the party module with consider for a party.
     PARTY_ALLOWED_CHARACTERS: [
         'Phanku',
         'YToo',
         'YKnot'
     ],
-    PCV: 1,
     // Defines the type of points for the character.
     POINTS: {
         HP: 1,
