@@ -1,7 +1,7 @@
 /**
  * Provides the party management features.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
+ * @version 0.27.0_028_85a83f5_2020-03-08_20:02:42
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -77,6 +77,23 @@ export default class Party {
     }
 
     /**
+     * Returns true if the specified character was part of the party before.
+     * @param name The character name.
+     * @returns {boolean}
+     */
+    static wasAPartyMember(name) {
+        return this.readPartyMembers().filter(word => name === word).length > 0;
+    }
+
+    /**
+     * Return true if the
+     * @returns {boolean}
+     */
+    static wasPartyLeader() {
+        return this.readPartyMembers()[0] === character.name;
+    }
+
+    /**
      * Returns true if, and only if, the specified character is part of the current party.
      * @param name The name of the character.
      * @returns {boolean}
@@ -106,22 +123,6 @@ export default class Party {
      */
     static isPartyLeader() {
         return this.characterIsPartyLeader(character.name);
-    }
-
-    /**
-     * Adds the specified character to the list of party members.
-     * @param character The character.
-     */
-    static addPartyMember(character) {
-        this.setPartyMembers(this.getPartyMembers().push(character));
-    }
-
-    /**
-     * Removes the specified character from the list of party members.
-     * @param character The character to remove from the party members.
-     */
-    static removePartyMember(character) {
-        this.setPartyMembers(this.getPartyMembers().filter(member => member !== character));
     }
 
     /**
@@ -159,18 +160,13 @@ export default class Party {
     }
 
     /**
-     * Causes the character to revoke the specified character from the current party.
-     * @param character The character to revoke.
-     * @stubbed
-     */
-    static revokePartyMember(character) {}
-
-    /**
      * Causes the character to accept the pending party invite.
      */
     static acceptPartyInvite(name) {
         accept_party_invite(name);
-        this.savePartyMembers(parent.party_list);
+        this.sendPartyMessage({
+            message: 'accepted_party_invite'
+        });
     }
 
     /**
@@ -200,6 +196,24 @@ export default class Party {
     }
 
     /**
+     * Sends a communication payload to a party member.
+     * @param payload The payload.
+     * @stubbed
+     */
+    static sendPartyMemberMessage(to, payload) {
+        send_cm(to, payload);
+    }
+
+    /**
+     * Sends a communication payload to all party members.
+     * @param payload
+     */
+    static sendPartyMessage(payload) {
+        payload = this.getPartyCommunicationPayload(payload);
+        parent.party_list.forEach((name)=>{this.sendPartyMemberMessage(name, payload)});
+    }
+
+    /**
      * Handles party communications from other party members.
      * Sends the specified payload to the specified party member/character.
      * Sends the payload to all party members if the character is not specified.
@@ -208,22 +222,6 @@ export default class Party {
      * @stubbed
      */
     static partyMessageHandler(from, payload) {
-
-    }
-
-    /**
-     * Sends a communication payload to a party member.
-     * @param payload The payload.
-     * @stubbed
-     */
-    static sendPartyMemberMessage(to, payload) {
-    }
-
-    /**
-     * Sends a communication payload to all party members.
-     * @param payload
-     */
-    static sendPartyMessage(payload) {
 
     }
 
@@ -340,6 +338,43 @@ export default class Party {
     }
 
     /**
+     * Provides the party watching functionality.
+     */
+    static partyWatcher() {
+        let savedParty = this.readPartyMembers();
+        this._partyWatcherCycle++;
+
+        //
+        if (savedParty.length === 0 && parent.party_list.length === 0) {
+            return;
+        }
+
+        // Invite all of the party members back to the party if this character was
+        if (parent.party_list.length === 0 && this.wasPartyLeader() && savedParty.length > 0) {
+            // A previous party was setup.
+            savedParty.forEach((member)=>{
+                if (!is_character(member)) {return true;}
+                send_party_invite(member);
+            });
+        }
+
+        let partyDifference = parent.party_list.filter(x => !savedParty.includes(x));
+        if (partyDifference.length > 0 && this.wasPartyLeader()) {
+            // A previous party was setup.
+            partyDifference.forEach((member)=>{
+                if (!is_character(member)) {return true;}
+                send_party_invite(member);
+            });
+        }
+
+        // Provides the 10 minute party auto-save.
+        if (this._partyWatcherCycle !== 1 && this._partyWatcherCycle % 600000 === 0) {
+            this.savePartyMembers(parent.party_list);
+            Logger.log(Logger.DEBUG, 'Saving party list.');
+        }
+    }
+
+    /**
      * Creates the event listeners needed for the party module.
      */
     static bindEvents() {
@@ -352,6 +387,9 @@ export default class Party {
      * Initializes the party class.
      */
     static init() {
+
+        this._partyWatcherCycle = 0;
+
         // Subscribing to the communications object.
         Communications.subscribe((broadcast) => {
             // The broadcastHandler function must be wrapped by a lambda function so as to maintain the
@@ -362,6 +400,12 @@ export default class Party {
         this.initPartyStorage();
         // Binding to the socket events.
         this.bindEvents();
+
+        // Starting party watcher.
+        setInterval(()=>{
+            this.partyWatcher()
+        }, 30000);
+
         // Initializing the observers array.
         Logger.log(Logger.DEBUG, 'Party initialized.');
     }
