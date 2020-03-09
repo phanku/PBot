@@ -1,7 +1,7 @@
 /**
  * Provides the range attack behavior for characters.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_029_7a64e9f_2020-03-09_09:36:24
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -17,7 +17,7 @@ module.exports = (bot) => {
 
     return {
         run() {
-            console.log(bob);
+            console.log(bot);
         }
     };
 

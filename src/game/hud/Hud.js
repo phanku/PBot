@@ -1,16 +1,16 @@
 /**
  * Provides the PBot HUD.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.4_008_caded2a_2020-02-24_15:12:16
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  * @todo Move any settings that could be considered semi-permanent into the storage module/local storage.
  */
 
-// Imports.
-const C = require('../Constants');
-const Logger = require('../logger/Logger').default;
-const Storage = require('../Storage').default;
-const Communications = require('../Communications').default;
+// Imports
+import { C } from "../Constants";
+import Logger from "../logger/Logger";
+import Storage from "../Storage";
+import Communications from "../Communications";
 
 /**
  * Provides the methods and HUD interface.

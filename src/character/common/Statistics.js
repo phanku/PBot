@@ -1,14 +1,13 @@
 /**
  * Provides running progress information.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
 // Imports.
-const C = require('../../game/Constants');
-const Communications = require('../../game/Communications').default;
-const Logger = require('../../game/logger/Logger').default;
+import { C } from "../../game/Constants";
+import Communications from "../../game/Communications";
 
 /**
  * Provides the statistics of the character.

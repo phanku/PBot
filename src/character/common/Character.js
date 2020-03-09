@@ -1,20 +1,18 @@
 /**
  * Base character operations object.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_029_7a64e9f_2020-03-09_09:36:24
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
+
 // Imports.
-const C = require('../../game/Constants');
+import { C } from "../../game/Constants";
 import Logger from "../../game/logger/Logger";
-import Heapify from "heapify";
 import Storage from "../../game/Storage";
 import Communications from "../../game/Communications";
-// const Logger = require('../../game/logger/Logger').default;
-// const Storage = require('../../game/Storage').default;
-// const Communications = require('../../game/Communications').default;
-const Statistics = require('./Statistics').default;
+import Statistics from "./Statistics";
+import { Inventory } from "./Inventory";
 
 /**
  * The parent character class.
@@ -188,7 +186,7 @@ export default class Character {
      */
     constructor() {
 
-        this._directives = new Heapify();
+        // this._directives = new Heapify();
 
         // Initializing the configurations.
         this._config = {
@@ -208,7 +206,7 @@ export default class Character {
         };
 
         // Loading the inventory module.
-        this._inventory = require('./Inventory');
+        this._inventory = Inventory;
 
         // Subscribe to the communications hub.
         Communications.subscribe((broadcast)=>{
@@ -218,7 +216,7 @@ export default class Character {
         // Starting the main character loop.
         setInterval(()=> {
             this.characterRun();
-            this.classRun(this);
+            // this.classRun(this);
         }, 1000/6);
     }
 };

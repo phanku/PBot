@@ -1,22 +1,19 @@
 /**
  * Provides all inventory methods needed for a character.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
 // Imports.
-const C = require('../../game/Constants');
-const Communications = require('../../game/Communications').default;
-const _ = require('underscore');
+import { C } from "../../game/Constants";
+import { _ } from 'underscore';
+import Communications from "../../game/Communications";
 
 /**
  * Provides character inventory methods.
- * @type {{ potionNames: {}, getHighestPotion(*=): string, compileAllPotionList(): void,
- *      getEmptyInventorySlotCount(): number, getItemQuantity(*): number, getGold(): number, getPotionCounts(): {},
- *      sendGold(*=, *=): void, potionNamesCompiled: boolean }}
  */
-module.exports = {
+export let Inventory = {
 
     // Determines if the potion names have been compiled.
     potionNamesCompiled: false,

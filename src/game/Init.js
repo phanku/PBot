@@ -1,21 +1,21 @@
 /**
  * Initializes PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
+
 // Imports.
-const C = require('./Constants');
-const Hud = require('./hud/Hud').default;
-const Storage = require('./Storage').default;
-const Logger = require('./logger/Logger').default;
-const Communications = require('./Communications').default;
-const Party = require('./Party').default;
+import { C } from "./Constants";
+import Logger from "./logger/Logger";
+import Communications from "./Communications";
+// noinspection ES6UnusedImports
+import Hud from "./hud/Hud";
+import { Mage } from "../character/Mage";
 
 /**
  * Creates the main PBot object.
- * @type {{init(): void, getBotVersion(): *, getCharacter(*): Character, reportBotVersion(): void}}
  */
 const PBot = {
 
@@ -35,7 +35,7 @@ const PBot = {
      */
     reportBotVersion() {
         let botVersion = this.getBotVersion();
-        Logger.log(Logger.INFO, '-- <a href="https://github.com/phanku/PBot">PBot</a>: ' + botVersion);
+        Logger.log(Logger.INFO, '-- PBot: ' + botVersion);
         Communications.broadcast(Communications
             .getBroadcastObject(C.COMMS.GAME.BOT_VERSION, {version: botVersion}, this));
     },
@@ -52,12 +52,13 @@ const PBot = {
         switch (ctype) {
             case C.CHARACTER_CLASS.MAGE:
                 classType = 'Mage';
-                character = require('../character/Mage').default;
+                character = new Mage();
+                // character = require('../character/Mage').default;
                 break;
 
             case C.CHARACTER_CLASS.RANGER:
                 classType = 'Ranger';
-                character = require('../character/Ranger').default;
+                // character = require('../character/Ranger').default;
                 break;
 
             case C.CHARACTER_CLASS.MERCHANT:
@@ -66,7 +67,7 @@ const PBot = {
 
             case C.CHARACTER_CLASS.PRIEST:
                 classType = 'Priest';
-                character = require('../character/Priest').default;
+                // character = require('../character/Priest').default;
                 break;
 
             case C.CHARACTER_CLASS.ROGUE:
@@ -83,7 +84,7 @@ const PBot = {
 
         Logger.log(Logger.DEBUG, classType + " character detected.");
         // noinspection JSObjectNullOrUndefined,JSValidateTypes
-        return new character();
+        return character;
     },
 
     /**
@@ -105,5 +106,3 @@ const PBot = {
 
 // Initialize the Bot.
 PBot.init(parent);
-// Export the bot for Webpack.
-module.exports = PBot;

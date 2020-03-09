@@ -1,10 +1,10 @@
 /**
  * Provides the constants for PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.26.0_025_13cd16b_2020-03-07_12:08:46
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
-module.exports = {
+export const C = {
     // Defines the object types within the game.
     OBJECTS: {
         NPC: 'npc',
@@ -135,9 +135,3 @@ module.exports = {
         }
     }
 };
-
-
-
-
-
-

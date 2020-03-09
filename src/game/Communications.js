@@ -1,12 +1,13 @@
 /**
  * Provides the communications hub between the objects in PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.27.0_030_b319636_2020-03-09_16:06:43
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
+
 // Imports.
-const Logger = require('./logger/Logger').default;
+import Logger from "./logger/Logger";
 
 /**
  * Provides the communications hub for PBot.
