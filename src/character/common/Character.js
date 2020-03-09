@@ -1,15 +1,19 @@
 /**
  * Base character operations object.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.22.0_001_d08612d_2020-02-24_09:01:52
+ * @version 0.27.0_029_7a64e9f_2020-03-09_09:36:24
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
 // Imports.
 const C = require('../../game/Constants');
-const Logger = require('../../game/logger/Logger').default;
-const Storage = require('../../game/Storage').default;
-const Communications = require('../../game/Communications').default;
+import Logger from "../../game/logger/Logger";
+import Heapify from "heapify";
+import Storage from "../../game/Storage";
+import Communications from "../../game/Communications";
+// const Logger = require('../../game/logger/Logger').default;
+// const Storage = require('../../game/Storage').default;
+// const Communications = require('../../game/Communications').default;
 const Statistics = require('./Statistics').default;
 
 /**
@@ -170,12 +174,22 @@ export default class Character {
      * Executes the code that controls the specific character class.
      * @stubbed Stubbed as this method is overridden by a sub class.
      */
-    classRun() {}
+    classRun() {
+        this._directives.forEach(directive => directive.run());
+    }
+
+    AddDirective(directive, priority) {
+        priority = typeof priority === 'undefined' ? this._directives.length : priority;
+        this._directives.push(directive, priority);
+    }
 
     /**
      * Initializes the main character class.
      */
     constructor() {
+
+        this._directives = new Heapify();
+
         // Initializing the configurations.
         this._config = {
             attackActive: false,

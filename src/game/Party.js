@@ -1,7 +1,7 @@
 /**
  * Provides the party management features.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_028_85a83f5_2020-03-08_20:02:42
+ * @version 0.27.0_029_7a64e9f_2020-03-09_09:36:24
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -39,6 +39,8 @@ const sha256 = require('sha256/lib/sha256');
  * Rules for communication:
  *      - A party member must only converse with the party leader.
  *      - A party leader shall be able to converse with the entire party.
+ *
+ * @todo Move the CM communication into the Communications module.
  */
 export default class Party {
 
