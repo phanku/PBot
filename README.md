@@ -1,7 +1,7 @@
 # PBot - An AdventureLand bot.
 ###### DV: @version 0.27.0_028_85a83f5_2020-03-08_20:02:42
 ## Author: [Joseph Pahl]
-## Version: @tag 0.27.0
+## Version: @tag 0.29.0
 
 [Changelog](CHANGELOG.md)
     
