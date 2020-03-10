@@ -1,7 +1,7 @@
 /**
  * Provides the PBot HUD.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_030_b319636_2020-03-09_16:06:43
+ * @version 0.27.0_032_c75b903_2020-03-10_16:26:52
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  * @todo Move any settings that could be considered semi-permanent into the storage module/local storage.
  */
@@ -153,9 +153,17 @@ export default class Hud {
     }
 
     /**
+     * Activates the blur event in the hud that will cause the potion consumption points to be updated.
+     */
+    static initTriggerPoints() {
+        this._R.mpPotionTrigger.add(this._R.hpPotionTrigger).on('blur', (e) => {
+            Communications.broadcast(
+                Communications.getBroadcastObject(C.COMMS.HUD.SETTING_UPDATE, this.getCharacterConfigs(), this));
+        });
+    }
+
+    /**
      * Returns an object that contains the settings in the HUD.
-     * @returns {{attackActive: (jQuery|string|undefined), minXP: (jQuery|string|undefined),
-     *              ignoreRange: (jQuery|string|undefined)}}
      */
     static getCharacterConfigs() {
         // Collect and return the Hud configurations.
@@ -444,6 +452,7 @@ export default class Hud {
                     // Activate the HUD tabs.
                     this.initHudTabs();
                     this.initHudChecks();
+                    this.initTriggerPoints();
                     this.initHudMinimize();
                     setTimeout(()=>{
                         this.startGraph();

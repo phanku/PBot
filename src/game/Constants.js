@@ -1,7 +1,7 @@
 /**
  * Provides the constants for PBot.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_030_b319636_2020-03-09_16:06:43
+ * @version 0.27.0_032_c75b903_2020-03-10_16:26:52
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 export const C = {
@@ -132,6 +132,15 @@ export const C = {
             DAMAGE: 30,
             GOLD: 60,
             XP: 60
+        }
+    },
+    SKILLS: {
+        MAGE: {
+            MANA_BURST: {
+                NAME: "Mana Burst",
+                MACHINE: "burst",
+                DPMP: 0.555
+            }
         }
     }
 };
