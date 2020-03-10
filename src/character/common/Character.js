@@ -1,7 +1,7 @@
 /**
  * Base character operations object.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_030_b319636_2020-03-09_16:06:43
+ * @version 0.27.0_031_a71f985_2020-03-10_13:02:36
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -13,6 +13,7 @@ import Storage from "../../game/Storage";
 import Communications from "../../game/Communications";
 import Statistics from "./Statistics";
 import { Inventory } from "./Inventory";
+import DirectiveQueue from "./DirectiveQueue";
 
 /**
  * The parent character class.
@@ -173,12 +174,7 @@ export default class Character {
      * @stubbed Stubbed as this method is overridden by a sub class.
      */
     classRun() {
-        this._directives.forEach(directive => directive.run());
-    }
-
-    AddDirective(directive, priority) {
-        priority = typeof priority === 'undefined' ? this._directives.length : priority;
-        this._directives.push(directive, priority);
+        this.directives.getQueue().forEach(directive => directive.run());
     }
 
     /**
@@ -186,7 +182,7 @@ export default class Character {
      */
     constructor() {
 
-        // this._directives = new Heapify();
+        this.directives = new DirectiveQueue();
 
         // Initializing the configurations.
         this._config = {
@@ -216,7 +212,7 @@ export default class Character {
         // Starting the main character loop.
         setInterval(()=> {
             this.characterRun();
-            // this.classRun(this);
+            this.classRun();
         }, 1000/6);
     }
 };
