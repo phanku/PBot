@@ -2,7 +2,7 @@
  * Provides the mage character class.
  * Note: Very alpha character.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.29.0_035_68a74ce_2020-03-10_19:40:00
+ * @version 0.29.0_037_3541911_2020-03-11_07:41:05
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -26,11 +26,6 @@ export class Mage extends Character {
         // Setting the default behavior for the character class.
         this.directives.enqueue(require('./common/directives/RangeAttack').default(this));
         // this.directives.enqueue(require('./common/directives/UseManaBurst').default(this));
-
-        // Hello World, Omg.
-        // Just because
-        // Why not?
-
 
         // Logging debug message.
         Logger.log(Logger.DEBUG, "Mage character loaded.");
