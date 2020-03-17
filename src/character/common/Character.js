@@ -1,7 +1,7 @@
 /**
  * Base character operations object.
  * @author Joseph Pahl <https://github.com/phanku/>
- * @version 0.27.0_032_c75b903_2020-03-10_16:26:52
+ * @version 0.29.0_038_c8aec10_2020-03-17_15:57:25
  * @since 0.22.0_001_d08612d_2020-02-24_08:53:57
  */
 
@@ -210,7 +210,7 @@ export default class Character {
             this.broadcastHandler(broadcast);
         });
 
-        this.lastMP = character.mp;
+
         // Starting the main character loop.
         setInterval(()=> {
             this.characterRun();
