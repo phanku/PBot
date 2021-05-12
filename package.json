@@ -9,7 +9,7 @@
     "build": "webpack"
   },
   "devDependencies": {
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "css-loader": "^3.4.2",
     "exports-loader": "^0.7.0",
     "flexboxgrid": "^6.3.1",
